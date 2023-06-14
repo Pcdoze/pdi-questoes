@@ -3,5 +3,6 @@ ALTERNATIVAS = [
     'A',
     'B',
     'C',
-    'D'
+    'D',
+    'E'
 ]
