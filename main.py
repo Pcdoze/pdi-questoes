@@ -1,27 +1,27 @@
-import pytesseract
-import cv2 as cv
-import numpy as np
+import cv2
+from settings import settings
 
-import settings,  \
-        contours, \
-        tess_boxes
+import modules
 
 
-img = cv.imread('questoes/3.png')
-img = cv.resize(img, None, fx=1, fy=1)
+# Definir Constantes
+_settings = settings()
 
-print("s")
-manchas = contours.detectar_manchas(img)
+# Ler e diminuir tamanho da imagem
+img = cv2.imread('imagens/' + _settings.IMAGEM)
+img = cv2.resize(img, None, fx=0.5, fy=0.5)
 
-if len(manchas) == 5:
-    alternativas = tess_boxes.ler_alternativas(img, manchas)
+# Detectar alternativas na image
+manchas = modules.manchas.detectar_manchas(img)
+alternativas = modules.leitura.ler_alternativas(_settings, img, manchas)
+
+# Se a alternativa certa não for encontrada,
+# ela será considerada como marcada
+if (_settings.CORRETA not in alternativas):
+    print('RESPOSTA CERTA')
 else:
-    alternativas = tess_boxes.ler_alternativas(img)
+    print('RESPOSTA ERRADA')
 
-if (settings.CORRETA not in alternativas):
-    print('CERTA')
-else:
-    print('ERRADA')
-
-cv.waitKey(0)
-cv.destroyAllWindows()
+# Fechar janelas do cv2
+cv2.waitKey(0)
+cv2.destroyAllWindows()
