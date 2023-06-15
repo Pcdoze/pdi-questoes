@@ -18,9 +18,11 @@ alternativas = modules.leitura.ler_alternativas(_settings, img, manchas)
 # Se a alternativa certa não for encontrada,
 # ela será considerada como marcada
 if (_settings.CORRETA not in alternativas):
-    print('RESPOSTA CERTA')
+    print('RESPOSTA SELECIONADA:', sorted(
+        [x for x in _settings.ALTERNATIVAS if x not in alternativas]), 'CORRETA (√)')
 else:
-    print('RESPOSTA ERRADA')
+    print('RESPOSTA SELECIONADA:', sorted(
+        [x for x in _settings.ALTERNATIVAS if x not in alternativas]), 'ERRADA (X)')
 
 # Fechar janelas do cv2
 cv2.waitKey(0)
