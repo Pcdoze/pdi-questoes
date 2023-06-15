@@ -1,44 +1,27 @@
-import pytesseract
-import cv2 as cv
-import numpy as np
+import cv2
+from settings import settings
 
-import settings
+import modules
 
 
-img = cv.imread('questoes/5.png')
-img = cv.resize(img, None, fx=1, fy=1)
+# Definir Constantes
+_settings = settings()
 
-cinza = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
+# Ler e diminuir tamanho da imagem
+img = cv2.imread('imagens/' + _settings.IMAGEM)
+img = cv2.resize(img, None, fx=0.5, fy=0.5)
 
-height, width, _ = img.shape
+# Detectar alternativas na image
+manchas = modules.manchas.detectar_manchas(img)
+alternativas = modules.leitura.ler_alternativas(_settings, img, manchas)
 
-boxes = pytesseract.image_to_boxes(cinza, config="--psm 11 --oem 3")
-
-alternativas = []
-alternativa = None
-
-for box in boxes.splitlines():
-    box = box.split(" ")
-    
-    x1, y1, x2, y2 = int(box[1]), height-int(box[2]), int(box[3]), height-int(box[4])
-    
-    if alternativa:
-        if box[0] == ')':
-            alternativas.append(alternativa)
-            
-        alternativa = None
-
-    if box[0] in settings.ALTERNATIVAS:
-        alternativa = box[0]
-        
-        
-if(settings.CORRETA not in alternativas):
-    print('CERTA')
+# Se a alternativa certa não for encontrada,
+# ela será considerada como marcada
+if (_settings.CORRETA not in alternativas):
+    print('RESPOSTA CERTA')
 else:
-    print('ERRADA')
-        
-print(alternativas)
-cv.imshow('output', img)
+    print('RESPOSTA ERRADA')
 
-cv.waitKey(0)
-cv.destroyAllWindows()
+# Fechar janelas do cv2
+cv2.waitKey(0)
+cv2.destroyAllWindows()
